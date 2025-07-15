@@ -34,7 +34,7 @@ impl JsOrderBook {
         let id = OrderId(uuid::Uuid::new_v4());
         self.inner
             .add_limit_order(id, price as u64, quantity as u64, side, tif)
-            .map_err(|e| Error::from_reason(format!("{:?}", e)))?;
+            .map_err(|e| Error::from_reason(format!("{e:?}")))?;
         Ok(id.0.to_string())
     }
 
