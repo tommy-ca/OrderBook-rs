@@ -58,6 +58,21 @@ This version introduces significant performance optimizations and architectural 
 ### Status
 This project is currently in active development and is not yet suitable for production use.
 
+### Language Bindings
+Optional bindings are available for Python and Node.js. Enable the corresponding
+feature when building:
+
+```bash
+# Build with Python bindings
+cargo build --features python
+
+# Build with Node.js bindings
+cargo build --features nodejs
+```
+
+When enabled, the crate exposes `PyOrderBook` and `JsOrderBook` types which
+mirror the native `OrderBook` API.
+
 ## Performance Analysis of the OrderBook System
 
 This analyzes the performance of the OrderBook system based on tests conducted on an Apple M4 Max processor. The data comes from two types of tests: a High-Frequency Trading (HFT) simulation and contention pattern tests.
