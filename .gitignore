@@ -28,3 +28,7 @@ src/.DS_Store
 /tarpaulin-report.html
 .secrets
 /scripts/
+node_modules/
+*.node
+*.tgz
+target/wheels/

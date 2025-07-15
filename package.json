@@ -1,0 +1,17 @@
+{
+  "name": "orderbook-rs",
+  "version": "0.1.0",
+  "description": "Node.js bindings for OrderBook-rs",
+  "main": "index.js",
+  "files": [
+    "index.node"
+  ],
+  "scripts": {
+    "build": "napi build --release",
+    "test": "node -e \"console.log('no tests')\""
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.4"
+  }
+}
