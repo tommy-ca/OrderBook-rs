@@ -14,6 +14,14 @@
 
 {{readme}}
 
+### Language Bindings
+Optional Python and Node.js bindings are available. Build with:
+
+```bash
+cargo build --features python   # Python bindings
+cargo build --features nodejs   # Node.js bindings
+```
+
 
 ## 🛠 Makefile Commands
 
