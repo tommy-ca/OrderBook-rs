@@ -14,6 +14,26 @@
 
 {{readme}}
 
+## Language Bindings
+
+This crate provides optional bindings for Python and Node.js.
+
+### Python
+
+Enable the `python` feature to build with [PyO3](https://pyo3.rs/):
+
+```sh
+cargo build --features python
+```
+
+### Node.js
+
+Enable the `nodejs` feature to build with [napi-rs](https://napi.rs/):
+
+```sh
+cargo build --features nodejs
+```
+
 
 ## 🛠 Makefile Commands
 
