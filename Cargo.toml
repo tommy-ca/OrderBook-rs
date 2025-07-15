@@ -34,7 +34,23 @@ pricelevel = { workspace = true }
 dashmap = { workspace = true }
 serde_json = { workspace = true }
 serde = { workspace = true }
+pyo3 = { version = "0.21", optional = true, features = ["extension-module"] }
+napi = { version = "3.0.0-beta.12", optional = true, default-features = false, features = ["napi4"] }
+napi-derive = { version = "3.0.0-beta.12", optional = true }
 
+[build-dependencies]
+napi-build = { version = "2.2.2", optional = true }
+
+[features]
+default = []
+python = ["pyo3"]
+nodejs = ["napi", "napi-derive", "napi-build"]
+
+[package.metadata.maturin]
+name = "orderbook_rs"
+
+[package.metadata.napi]
+name = "orderbook-rs"
 [dev-dependencies]
 criterion = { version = "0.6", features = ["html_reports"] }
 

@@ -14,6 +14,21 @@
 
 {{readme}}
 
+### Language Bindings
+Optional Python and Node.js bindings are available. Build with:
+
+```bash
+cargo build --features python   # Python bindings
+cargo build --features nodejs   # Node.js bindings
+```
+
+Once built, you can package the bindings:
+
+```bash
+maturin build --release      # Python wheel
+npm run build                # Node.js module
+```
+
 
 ## 🛠 Makefile Commands
 

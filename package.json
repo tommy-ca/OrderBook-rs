@@ -1,0 +1,10 @@
+{
+  "name": "orderbook-rs",
+  "version": "0.2.0",
+  "license": "MIT",
+  "files": ["index.js", "orderbook_rs.node"],
+  "main": "index.js",
+  "scripts": {
+    "build": "napi build --release"
+  }
+}
