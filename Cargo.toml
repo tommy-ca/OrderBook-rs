@@ -34,9 +34,19 @@ pricelevel = { workspace = true }
 dashmap = { workspace = true }
 serde_json = { workspace = true }
 serde = { workspace = true }
+pyo3 = { version = "0.21", optional = true, features = ["extension-module"] }
+napi = { version = "3.0.0-beta.12", optional = true, default-features = false, features = ["napi4"] }
+napi-derive = { version = "3.0.0-beta.12", optional = true }
 
+[features]
+default = []
+python = ["pyo3"]
+nodejs = ["napi", "napi-derive", "napi-build"]
 [dev-dependencies]
 criterion = { version = "0.6", features = ["html_reports"] }
+
+[build-dependencies]
+napi-build = { version = "2.0.1", optional = true }
 
 [[bench]]
 name = "benches"
