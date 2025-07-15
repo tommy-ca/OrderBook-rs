@@ -14,6 +14,19 @@
 
 {{readme}}
 
+## Language Bindings
+
+Optional bindings are provided for Python and Node.js. Enable the desired
+feature when building to expose the corresponding wrapper types.
+
+```sh
+# Build with Python bindings
+cargo build --features python
+
+# Build with Node.js bindings
+cargo build --features nodejs
+```
+
 
 ## 🛠 Makefile Commands
 

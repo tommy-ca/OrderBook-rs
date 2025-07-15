@@ -158,3 +158,12 @@ mod utils;
 
 pub use orderbook::{OrderBook, OrderBookError, OrderBookSnapshot};
 pub use utils::current_time_millis;
+
+#[cfg(any(feature = "python", feature = "nodejs"))]
+pub mod bindings;
+
+#[cfg(feature = "python")]
+pub use bindings::python::PyOrderBook;
+
+#[cfg(feature = "nodejs")]
+pub use bindings::node::JsOrderBook;

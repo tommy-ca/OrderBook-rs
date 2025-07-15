@@ -166,6 +166,18 @@ The system demonstrates an impressive capability to handle nearly **1 million op
 
 This analysis confirms that the system design is highly scalable and appropriate for demanding financial applications requiring high-speed processing with data consistency.
 
+## Language Bindings
+
+The crate can optionally expose bindings for Python and Node.js. Enable the corresponding
+feature to build these bindings and use the wrapper types:
+
+```sh
+# Python bindings
+cargo build --features python
+
+# Node.js bindings
+cargo build --features nodejs
+```
 
 ## 🛠 Makefile Commands
 
