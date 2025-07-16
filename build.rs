@@ -1,7 +1,4 @@
-#[cfg(feature = "nodejs")]
 fn main() {
+    #[cfg(feature = "nodejs")]
     napi_build::setup();
 }
-
-#[cfg(not(feature = "nodejs"))]
-fn main() {}
