@@ -49,8 +49,7 @@ impl JsOrderBook {
     }
 }
 
-// Add a simple standalone function to help with module registration
 #[napi]
 pub fn hello() -> String {
-    "Hello from OrderBook-rs NAPI!".to_string()
+    "Hello from OrderBook-rs!".to_string()
 }
