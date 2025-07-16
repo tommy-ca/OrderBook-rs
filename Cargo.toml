@@ -34,11 +34,11 @@ dashmap = { workspace = true }
 serde_json = { workspace = true }
 serde = { workspace = true }
 pyo3 = { version = "0.21", optional = true, features = ["extension-module"] }
-napi = { version = "3", optional = true, default-features = false, features = ["napi4"] }
-napi-derive = { version = "3", optional = true }
+napi = { version = "2.16", optional = true, default-features = false, features = ["napi4"] }
+napi-derive = { version = "2.16", optional = true }
 
 [build-dependencies]
-napi-build = { version = "3", optional = true }
+napi-build = { version = "2.18", optional = true }
 
 [features]
 default = []
