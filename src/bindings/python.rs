@@ -5,7 +5,6 @@ use pricelevel::{OrderId, OrderUpdate, PriceLevelError, Side, TimeInForce};
 use pyo3::prelude::*;
 
 #[pyclass]
-#[derive(Clone)]
 pub struct PyOrderBook {
     inner: OrderBook,
 }
