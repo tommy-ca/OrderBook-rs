@@ -38,7 +38,7 @@ napi = { version = "2.16", optional = true, default-features = false, features =
 napi-derive = { version = "2.16", optional = true }
 
 [build-dependencies]
-napi-build = { version = "2.18", optional = true }
+napi-build = { version = "2.2", optional = true }
 
 [features]
 default = []
