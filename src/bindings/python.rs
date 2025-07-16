@@ -1,15 +1,17 @@
 #![allow(unsafe_op_in_unsafe_fn)]
 
 use crate::orderbook::OrderBook;
-use pricelevel::{OrderId, PriceLevelError, Side, TimeInForce};
+use pricelevel::{OrderId, OrderUpdate, PriceLevelError, Side, TimeInForce};
 use pyo3::prelude::*;
 
 #[pyclass]
+#[derive(Clone)]
 pub struct PyOrderBook {
     inner: OrderBook,
 }
 
 #[pyclass]
+#[derive(Clone)]
 pub struct PyMatchResult {
     #[pyo3(get)]
     pub order_id: String,
@@ -30,6 +32,7 @@ pub struct PyMatchResult {
 }
 
 #[pyclass]
+#[derive(Clone)]
 pub struct PyTransaction {
     #[pyo3(get)]
     pub taker_order_id: String,
@@ -46,6 +49,7 @@ pub struct PyTransaction {
 }
 
 #[pyclass]
+#[derive(Clone)]
 pub struct PyOrderBookSnapshot {
     #[pyo3(get)]
     pub symbol: String,
@@ -58,6 +62,7 @@ pub struct PyOrderBookSnapshot {
 }
 
 #[pyclass]
+#[derive(Clone)]
 pub struct PyPriceLevel {
     #[pyo3(get)]
     pub price: u64,
@@ -66,7 +71,7 @@ pub struct PyPriceLevel {
     #[pyo3(get)]
     pub hidden_quantity: u64,
     #[pyo3(get)]
-    pub order_count: u32,
+    pub order_count: usize,
 }
 
 #[pymethods]
@@ -162,13 +167,15 @@ impl PyOrderBook {
             })
             .collect();
 
+        let filled_order_ids = result.filled_order_ids.clone().into_iter().map(|id| id.0.to_string()).collect();
+
         Ok(PyMatchResult {
             order_id: result.order_id.0.to_string(),
             executed_quantity: result.executed_quantity(),
             remaining_quantity: result.remaining_quantity,
             is_complete: result.is_complete,
             transactions,
-            filled_order_ids: result.filled_order_ids.into_iter().map(|id| id.0.to_string()).collect(),
+            filled_order_ids,
             executed_value: result.executed_value(),
             average_price: result.average_price(),
         })
@@ -191,7 +198,12 @@ impl PyOrderBook {
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Invalid order ID: {e}")))?;
         let order_id = OrderId(id);
         
-        match self.inner.update_order(order_id, new_quantity) {
+        let update = OrderUpdate::UpdateQuantity {
+            order_id,
+            new_quantity,
+        };
+        
+        match self.inner.update_order(update) {
             Ok(Some(_)) => Ok(true),
             Ok(None) => Ok(false),
             Err(e) => Err(PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("{e:?}"))),
@@ -236,10 +248,6 @@ impl PyOrderBook {
 
     pub fn total_orders(&self) -> usize {
         self.inner.get_all_orders().len()
-    }
-
-    pub fn total_volume(&self) -> u64 {
-        self.inner.total_volume()
     }
 
     pub fn create_snapshot(&self, depth: usize) -> PyOrderBookSnapshot {
@@ -296,16 +304,8 @@ impl PyOrderBook {
         result
     }
 
-    pub fn is_crossed(&self) -> bool {
-        self.inner.is_crossed()
-    }
-
     pub fn set_market_close_timestamp(&self, timestamp: u64) {
         self.inner.set_market_close_timestamp(timestamp);
-    }
-
-    pub fn clear(&self) {
-        self.inner.clear();
     }
 }
 
