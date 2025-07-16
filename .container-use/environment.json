@@ -1,0 +1,12 @@
+{
+  "workdir": "/workdir",
+  "base_image": "ubuntu:24.04",
+  "setup_commands": [
+    "apt-get update \u0026\u0026 apt-get install -y curl git build-essential pkg-config libssl-dev",
+    "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
+    "curl -fsSL https://deb.nodesource.com/setup_22.x | bash -",
+    "apt-get install -y nodejs",
+    ". ~/.cargo/env \u0026\u0026 rustup default stable",
+    "npm install -g @napi-rs/cli"
+  ]
+}

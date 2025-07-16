@@ -35,7 +35,7 @@ dashmap = { workspace = true }
 serde_json = { workspace = true }
 serde = { workspace = true }
 pyo3 = { version = "0.21", optional = true, features = ["extension-module"] }
-napi = { version = "2.16", optional = true, default-features = false, features = ["napi9"] }
+napi = { version = "2.16", optional = true, default-features = false, features = ["napi4"] }
 napi-derive = { version = "2.16", optional = true }
 
 [build-dependencies]
@@ -61,7 +61,7 @@ path = "tests/unit/mod.rs"
 [lib]
 name = "orderbook_rs"
 path = "src/lib.rs"
-crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib"]
 
 [workspace]
 members = [

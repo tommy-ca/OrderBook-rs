@@ -166,4 +166,4 @@ pub mod bindings;
 pub use bindings::python::PyOrderBook;
 
 #[cfg(feature = "nodejs")]
-pub use bindings::node::JsOrderBook;
+pub use bindings::node::{JsOrderBook, hello};
