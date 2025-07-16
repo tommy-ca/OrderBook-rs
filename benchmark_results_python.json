@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-07-16T14:49:41.963748",
+  "platform": "Python",
+  "results": [
+    {
+      "name": "Single Order Insertion",
+      "operations": 10000,
+      "duration": 0.3086594300111756,
+      "ops_per_second": 32398.167778764873,
+      "memory_usage": 0.0,
+      "timestamp": "2025-07-16T14:49:37.672091"
+    },
+    {
+      "name": "Batch Order Insertion",
+      "operations": 10000,
+      "duration": 0.27994611096801236,
+      "ops_per_second": 35721.16063845815,
+      "memory_usage": 0.0,
+      "timestamp": "2025-07-16T14:49:37.953100"
+    },
+    {
+      "name": "Price Queries",
+      "operations": 200000,
+      "duration": 2.044267373974435,
+      "ops_per_second": 97834.56046219771,
+      "memory_usage": 0.0,
+      "timestamp": "2025-07-16T14:49:40.024733"
+    },
+    {
+      "name": "Mixed Operations",
+      "operations": 5000,
+      "duration": 0.1258450099849142,
+      "ops_per_second": 39731.412477931226,
+      "memory_usage": 0.0,
+      "timestamp": "2025-07-16T14:49:40.152332"
+    },
+    {
+      "name": "Concurrent Simulation",
+      "operations": 4000,
+      "duration": 0.11834017198998481,
+      "ops_per_second": 33800.8635,
+      "memory_usage": 0.0,
+      "timestamp": "2025-07-16T14:49:40.277911"
+    },
+    {
+      "name": "Memory Usage",
+      "operations": 50000,
+      "duration": 1.349745956948027,
+      "ops_per_second": 37044.00797988483,
+      "memory_usage": 0.0,
+      "timestamp": "2025-07-16T14:49:41.640254"
+    },
+    {
+      "name": "Latency Distribution",
+      "operations": 10000,
+      "duration": 0.31047534564277157,
+      "ops_per_second": 32208.676599738308,
+      "memory_usage": 0.0,
+      "timestamp": "2025-07-16T14:49:41.963553"
+    }
+  ]
+}

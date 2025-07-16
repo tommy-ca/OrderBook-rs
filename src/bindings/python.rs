@@ -46,7 +46,7 @@ impl PyOrderBook {
 }
 
 #[pymodule]
-pub fn orderbook_rs_py(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+pub fn orderbook_rs(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add_class::<PyOrderBook>()?;
     Ok(())
 }

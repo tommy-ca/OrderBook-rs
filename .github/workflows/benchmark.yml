@@ -1,0 +1,277 @@
+name: Benchmark and Performance Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sunday
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  benchmark-rust:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+
+    - name: Cache cargo
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-bench-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Run Rust benchmarks
+      run: cargo bench --all-features
+
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v3
+      with:
+        name: rust-benchmark-results
+        path: target/criterion/
+
+  benchmark-python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, '3.10', '3.11', '3.12']
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install maturin psutil
+
+    - name: Build Python bindings
+      run: maturin develop --features python
+
+    - name: Run Python benchmarks
+      run: python3 src/bindings/tests/benchmark_tests.py
+
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v3
+      with:
+        name: python-benchmark-results-${{ matrix.python-version }}
+        path: benchmark_results_python.json
+
+  benchmark-nodejs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16, 18, 20]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build Node.js bindings
+      run: npm run build
+
+    - name: Run Node.js benchmarks
+      run: node --expose-gc src/bindings/tests/benchmark_tests.js
+
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v3
+      with:
+        name: nodejs-benchmark-results-${{ matrix.node-version }}
+        path: benchmark_results_nodejs.json
+
+  benchmark-comparison:
+    runs-on: ubuntu-latest
+    needs: [benchmark-rust, benchmark-python, benchmark-nodejs]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Download all benchmark results
+      uses: actions/download-artifact@v3
+    
+    - name: Install analysis dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install matplotlib pandas numpy
+
+    - name: Generate performance comparison report
+      run: |
+        python3 -c "
+        import json
+        import os
+        import pandas as pd
+        import matplotlib.pyplot as plt
+        
+        # Collect all benchmark results
+        results = []
+        for root, dirs, files in os.walk('.'):
+            for file in files:
+                if file.endswith('_results.json'):
+                    with open(os.path.join(root, file), 'r') as f:
+                        data = json.load(f)
+                        for result in data['results']:
+                            results.append({
+                                'platform': data['platform'],
+                                'benchmark': result['name'],
+                                'ops_per_second': result['ops_per_second'],
+                                'duration': result['duration']
+                            })
+        
+        # Create comparison DataFrame
+        df = pd.DataFrame(results)
+        
+        # Generate summary report
+        summary = df.groupby(['platform', 'benchmark'])['ops_per_second'].mean().unstack(fill_value=0)
+        
+        print('Performance Comparison Report')
+        print('=' * 50)
+        print(summary.to_string())
+        
+        # Save to file
+        summary.to_csv('benchmark_comparison.csv')
+        
+        # Create visualization
+        plt.figure(figsize=(12, 8))
+        summary.plot(kind='bar', ax=plt.gca())
+        plt.title('Performance Comparison Across Platforms')
+        plt.xlabel('Platform')
+        plt.ylabel('Operations per Second')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig('benchmark_comparison.png')
+        "
+
+    - name: Upload comparison report
+      uses: actions/upload-artifact@v3
+      with:
+        name: benchmark-comparison-report
+        path: |
+          benchmark_comparison.csv
+          benchmark_comparison.png
+
+  performance-regression:
+    runs-on: ubuntu-latest
+    needs: [benchmark-python, benchmark-nodejs]
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Download benchmark results
+      uses: actions/download-artifact@v3
+
+    - name: Check for performance regression
+      run: |
+        python3 -c "
+        import json
+        import sys
+        import os
+        
+        # Define performance thresholds
+        REGRESSION_THRESHOLD = -0.05  # 5% regression threshold
+        
+        # Load current benchmark results
+        current_results = {}
+        for root, dirs, files in os.walk('.'):
+            for file in files:
+                if file.endswith('_results.json'):
+                    with open(os.path.join(root, file), 'r') as f:
+                        data = json.load(f)
+                        platform = data['platform']
+                        current_results[platform] = {r['name']: r['ops_per_second'] for r in data['results']}
+        
+        # Check for baseline file (would be from main branch)
+        baseline_file = 'benchmark_baseline.json'
+        if os.path.exists(baseline_file):
+            with open(baseline_file, 'r') as f:
+                baseline_data = json.load(f)
+                baseline_results = {r['name']: r['ops_per_second'] for r in baseline_data['results']}
+            
+            # Check for regressions
+            regressions = []
+            for platform, benchmarks in current_results.items():
+                for benchmark, current_ops in benchmarks.items():
+                    if benchmark in baseline_results:
+                        baseline_ops = baseline_results[benchmark]
+                        if baseline_ops > 0:
+                            change = (current_ops - baseline_ops) / baseline_ops
+                            if change < REGRESSION_THRESHOLD:
+                                regressions.append({
+                                    'platform': platform,
+                                    'benchmark': benchmark,
+                                    'change': change * 100,
+                                    'current': current_ops,
+                                    'baseline': baseline_ops
+                                })
+            
+            if regressions:
+                print('Performance Regressions Detected:')
+                for reg in regressions:
+                    print(f'  {reg[\"platform\"]} - {reg[\"benchmark\"]}: {reg[\"change\"]:.1f}% ({reg[\"current\"]:.0f} vs {reg[\"baseline\"]:.0f} ops/sec)')
+                sys.exit(1)
+            else:
+                print('No significant performance regressions detected')
+        else:
+            print('No baseline found, skipping regression check')
+        "
+
+    - name: Comment on PR
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '⚠️ Performance regression detected in this PR. Please review the benchmark results.'
+          })

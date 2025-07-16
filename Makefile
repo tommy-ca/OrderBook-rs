@@ -8,6 +8,9 @@ ZIP_NAME = OrderBook-rs.zip
 .PHONY: all
 all: test fmt lint build
 
+# Binding targets
+.PHONY: bindings python nodejs test-bindings clean-bindings build-all test-all bench-all ci dev-python dev-nodejs install-python install-nodejs quick-test
+
 # Build the project
 .PHONY: build
 build:
@@ -186,3 +189,79 @@ workflow: workflow-build workflow-lint workflow-test workflow-coverage
 .PHONY: tree
 tree: 
 	tree -I 'target|.idea|.run|.DS_Store|Cargo.lock|*.md|*.toml|*.zip|*.html|*.xml|*.json|*.txt|*.sh|*.yml|*.yaml|*.gitignore|*.gitattributes|*.gitmodules|*.git|*.gitkeep|*.gitlab-ci.yml' -a -L 3
+
+# Binding targets
+bindings: python nodejs
+
+python:
+	@echo "Building Python bindings..."
+	./scripts/build_bindings.sh python
+
+nodejs:
+	@echo "Building Node.js bindings..."
+	./scripts/build_bindings.sh nodejs
+
+test-bindings:
+	@echo "Testing all bindings..."
+	./scripts/build_bindings.sh test
+
+clean-bindings:
+	@echo "Cleaning binding artifacts..."
+	./scripts/build_bindings.sh clean
+
+# Combined targets
+build-all: build bindings
+
+test-all: test test-bindings
+
+bench-all: bench
+	@echo "Running binding benchmarks..."
+	./scripts/build_bindings.sh bench
+
+# Full build and test pipeline
+ci: build-all test-all bench-all fmt-check lint
+
+# Development helpers
+dev-python:
+	@echo "Building Python bindings for development..."
+	maturin develop --features python
+
+dev-nodejs:
+	@echo "Building Node.js bindings for development..."
+	npm run build
+
+# Installation targets
+install-python:
+	@echo "Installing Python bindings..."
+	pip install target/wheels/*.whl --force-reinstall
+
+install-nodejs:
+	@echo "Installing Node.js bindings..."
+	npm install
+
+# Quick development cycle
+quick-test: build test-bindings
+
+# Benchmark targets
+bench-bindings:
+	@echo "Running binding benchmarks..."
+	./scripts/build_bindings.sh bench
+
+bench-python:
+	@echo "Running Python binding benchmarks..."
+	python3 src/bindings/tests/benchmark_tests.py
+
+bench-nodejs:
+	@echo "Running Node.js binding benchmarks..."
+	node --expose-gc src/bindings/tests/benchmark_tests.js
+
+# Package targets
+package-python:
+	@echo "Packaging Python bindings..."
+	maturin build --release --features python
+
+package-nodejs:
+	@echo "Packaging Node.js bindings..."
+	npm pack
+
+package-all: package-python package-nodejs
