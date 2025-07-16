@@ -1,14 +1,14 @@
 use crate::orderbook::OrderBook;
 use napi_derive::napi;
 use napi::{Error, Result};
-use pricelevel::{OrderId, PriceLevelError, Side, TimeInForce};
+use pricelevel::{OrderId, OrderUpdate, PriceLevelError, Side, TimeInForce};
 
 #[napi]
 pub struct JsOrderBook {
     inner: OrderBook,
 }
 
-#[napi]
+#[napi(object)]
 pub struct JsMatchResult {
     pub order_id: String,
     pub executed_quantity: f64,
@@ -20,7 +20,7 @@ pub struct JsMatchResult {
     pub average_price: Option<f64>,
 }
 
-#[napi]
+#[napi(object)]
 pub struct JsTransaction {
     pub taker_order_id: String,
     pub maker_order_id: String,
@@ -30,7 +30,7 @@ pub struct JsTransaction {
     pub timestamp: f64,
 }
 
-#[napi]
+#[napi(object)]
 pub struct JsOrderBookSnapshot {
     pub symbol: String,
     pub timestamp: f64,
@@ -38,7 +38,7 @@ pub struct JsOrderBookSnapshot {
     pub asks: Vec<JsPriceLevel>,
 }
 
-#[napi]
+#[napi(object)]
 pub struct JsPriceLevel {
     pub price: f64,
     pub visible_quantity: f64,
@@ -143,13 +143,15 @@ impl JsOrderBook {
             })
             .collect();
 
+        let filled_order_ids = result.filled_order_ids.clone().into_iter().map(|id| id.0.to_string()).collect();
+
         Ok(JsMatchResult {
             order_id: result.order_id.0.to_string(),
             executed_quantity: result.executed_quantity() as f64,
             remaining_quantity: result.remaining_quantity as f64,
             is_complete: result.is_complete,
             transactions,
-            filled_order_ids: result.filled_order_ids.into_iter().map(|id| id.0.to_string()).collect(),
+            filled_order_ids,
             executed_value: result.executed_value() as f64,
             average_price: result.average_price(),
         })
@@ -174,7 +176,12 @@ impl JsOrderBook {
             .map_err(|e| Error::from_reason(format!("Invalid order ID: {e}")))?;
         let order_id = OrderId(id);
         
-        match self.inner.update_order(order_id, new_quantity as u64) {
+        let update = OrderUpdate::UpdateQuantity {
+            order_id,
+            new_quantity: new_quantity as u64,
+        };
+        
+        match self.inner.update_order(update) {
             Ok(Some(_)) => Ok(true),
             Ok(None) => Ok(false),
             Err(e) => Err(Error::from_reason(format!("{e:?}"))),
@@ -227,11 +234,6 @@ impl JsOrderBook {
     #[napi]
     pub fn total_orders(&self) -> i32 {
         self.inner.get_all_orders().len() as i32
-    }
-
-    #[napi]
-    pub fn total_volume(&self) -> f64 {
-        self.inner.total_volume() as f64
     }
 
     #[napi]
@@ -292,18 +294,8 @@ impl JsOrderBook {
     }
 
     #[napi]
-    pub fn is_crossed(&self) -> bool {
-        self.inner.is_crossed()
-    }
-
-    #[napi]
     pub fn set_market_close_timestamp(&self, timestamp: f64) {
         self.inner.set_market_close_timestamp(timestamp as u64);
-    }
-
-    #[napi]
-    pub fn clear(&self) {
-        self.inner.clear();
     }
 }
 
