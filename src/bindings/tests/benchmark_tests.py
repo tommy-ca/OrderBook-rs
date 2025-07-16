@@ -126,8 +126,8 @@ class OrderBookBenchmark:
         start_time = time.perf_counter()
         
         for _ in range(query_count):
-            bid = orderbook.best_bid()
-            ask = orderbook.best_ask()
+            orderbook.best_bid()
+            orderbook.best_ask()
         
         end_time = time.perf_counter()
         duration = end_time - start_time
@@ -153,8 +153,8 @@ class OrderBookBenchmark:
                 side = "Buy" if i % 2 == 0 else "Sell"
                 orderbook.add_limit_order(price, 100, side, "GTC")
             else:
-                bid = orderbook.best_bid()
-                ask = orderbook.best_ask()
+                orderbook.best_bid()
+                orderbook.best_ask()
         
         end_time = time.perf_counter()
         duration = end_time - start_time
@@ -167,7 +167,6 @@ class OrderBookBenchmark:
         """Simulate concurrent access patterns."""
         print("📊 Benchmarking concurrent simulation...")
         
-        import threading
         import concurrent.futures
         
         orderbook = PyOrderBook("BENCHMARK_CONCURRENT")

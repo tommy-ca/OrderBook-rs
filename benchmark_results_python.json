@@ -1,62 +1,62 @@
 {
-  "timestamp": "2025-07-16T14:49:41.963748",
+  "timestamp": "2025-07-16T15:49:04.363300",
   "platform": "Python",
   "results": [
     {
       "name": "Single Order Insertion",
       "operations": 10000,
-      "duration": 0.3086594300111756,
-      "ops_per_second": 32398.167778764873,
+      "duration": 0.2626245910068974,
+      "ops_per_second": 38077.16543854558,
       "memory_usage": 0.0,
-      "timestamp": "2025-07-16T14:49:37.672091"
+      "timestamp": "2025-07-16T15:49:00.230637"
     },
     {
       "name": "Batch Order Insertion",
       "operations": 10000,
-      "duration": 0.27994611096801236,
-      "ops_per_second": 35721.16063845815,
+      "duration": 0.2578405499807559,
+      "ops_per_second": 38783.65912866055,
       "memory_usage": 0.0,
-      "timestamp": "2025-07-16T14:49:37.953100"
+      "timestamp": "2025-07-16T15:49:00.489535"
     },
     {
       "name": "Price Queries",
       "operations": 200000,
-      "duration": 2.044267373974435,
-      "ops_per_second": 97834.56046219771,
+      "duration": 1.8901608139858581,
+      "ops_per_second": 105811.1026956759,
       "memory_usage": 0.0,
-      "timestamp": "2025-07-16T14:49:40.024733"
+      "timestamp": "2025-07-16T15:49:02.406439"
     },
     {
       "name": "Mixed Operations",
       "operations": 5000,
-      "duration": 0.1258450099849142,
-      "ops_per_second": 39731.412477931226,
+      "duration": 0.11234752897871658,
+      "ops_per_second": 44504.761657438976,
       "memory_usage": 0.0,
-      "timestamp": "2025-07-16T14:49:40.152332"
+      "timestamp": "2025-07-16T15:49:02.519892"
     },
     {
       "name": "Concurrent Simulation",
       "operations": 4000,
-      "duration": 0.11834017198998481,
-      "ops_per_second": 33800.8635,
+      "duration": 0.11781398701714352,
+      "ops_per_second": 33951.82610548564,
       "memory_usage": 0.0,
-      "timestamp": "2025-07-16T14:49:40.277911"
+      "timestamp": "2025-07-16T15:49:02.644538"
     },
     {
       "name": "Memory Usage",
       "operations": 50000,
-      "duration": 1.349745956948027,
-      "ops_per_second": 37044.00797988483,
+      "duration": 1.3898286059848033,
+      "ops_per_second": 35975.65900190337,
       "memory_usage": 0.0,
-      "timestamp": "2025-07-16T14:49:41.640254"
+      "timestamp": "2025-07-16T15:49:04.047173"
     },
     {
       "name": "Latency Distribution",
       "operations": 10000,
-      "duration": 0.31047534564277157,
-      "ops_per_second": 32208.676599738308,
+      "duration": 0.30357433372410014,
+      "ops_per_second": 32940.86122935669,
       "memory_usage": 0.0,
-      "timestamp": "2025-07-16T14:49:41.963553"
+      "timestamp": "2025-07-16T15:49:04.363097"
     }
   ]
 }

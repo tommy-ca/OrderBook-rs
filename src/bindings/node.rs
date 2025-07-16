@@ -1,6 +1,6 @@
 use crate::orderbook::OrderBook;
-use napi::bindgen_prelude::*;
 use napi_derive::napi;
+use napi::{Error, Result};
 use pricelevel::{OrderId, PriceLevelError, Side, TimeInForce};
 
 #[napi]
@@ -34,7 +34,7 @@ impl JsOrderBook {
         let id = OrderId(uuid::Uuid::new_v4());
         self.inner
             .add_limit_order(id, price as u64, quantity as u64, side, tif)
-            .map_err(|e| Error::from_reason(format!("{:?}", e)))?;
+            .map_err(|e| Error::from_reason(format!("{e:?}")))?;
         Ok(id.0.to_string())
     }
 
@@ -47,4 +47,9 @@ impl JsOrderBook {
     pub fn best_ask(&self) -> Option<i64> {
         self.inner.best_ask().map(|v| v as i64)
     }
+}
+
+#[napi]
+fn init() {
+    // Module initialization function
 }
