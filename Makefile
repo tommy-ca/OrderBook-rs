@@ -265,3 +265,16 @@ package-nodejs:
 	npm pack
 
 package-all: package-python package-nodejs
+
+# Pre-commit targets
+setup-precommit:
+	@echo "Setting up pre-commit hooks..."
+	./scripts/setup_precommit.sh
+
+precommit:
+	@echo "Running pre-commit on all files..."
+	pre-commit run --all-files
+
+precommit-update:
+	@echo "Updating pre-commit hooks..."
+	pre-commit update
