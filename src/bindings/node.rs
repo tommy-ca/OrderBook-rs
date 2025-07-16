@@ -20,8 +20,8 @@ impl JsOrderBook {
     #[napi]
     pub fn add_limit_order(
         &self,
-        price: i64,
-        quantity: i64,
+        price: f64,
+        quantity: f64,
         side: String,
         time_in_force: String,
     ) -> Result<String> {
@@ -39,13 +39,18 @@ impl JsOrderBook {
     }
 
     #[napi]
-    pub fn best_bid(&self) -> Option<i64> {
-        self.inner.best_bid().map(|v| v as i64)
+    pub fn best_bid(&self) -> Option<f64> {
+        self.inner.best_bid().map(|v| v as f64)
     }
 
     #[napi]
-    pub fn best_ask(&self) -> Option<i64> {
-        self.inner.best_ask().map(|v| v as i64)
+    pub fn best_ask(&self) -> Option<f64> {
+        self.inner.best_ask().map(|v| v as f64)
+    }
+
+    #[napi]
+    pub fn symbol(&self) -> String {
+        self.inner.symbol().to_string()
     }
 }
 
