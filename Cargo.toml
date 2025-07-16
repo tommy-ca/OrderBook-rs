@@ -1,7 +1,7 @@
 [package]
 name = "orderbook-rs"
 version = "0.2.0"
-edition = "2024"
+edition = "2021"
 authors = ["Joaquin Bejar <jb@taunais.com>"]
 description = "A high-performance, lock-free price level implementation for limit order books in Rust. This library provides the building blocks for creating efficient trading systems with support for multiple order types and concurrent access patterns."
 license = "MIT"
@@ -10,7 +10,6 @@ repository = "https://github.com/joaquinbejar/OrderBook-rs"
 homepage = "https://github.com/joaquinbejar/OrderBook-rs"
 keywords = ["finance", "orderbook", "trading"]
 categories = ["finance", "data-structures"]
-
 
 include = [
     "benches/**/*",
@@ -45,6 +44,7 @@ napi-build = { version = "2.2", optional = true }
 default = []
 python = ["pyo3"]
 nodejs = ["napi", "napi-derive", "napi-build"]
+
 [dev-dependencies]
 criterion = { version = "0.6", features = ["html_reports"] }
 
@@ -56,7 +56,6 @@ harness = false
 [[test]]
 name = "tests"
 path = "tests/unit/mod.rs"
-
 
 [lib]
 name = "orderbook_rs"
