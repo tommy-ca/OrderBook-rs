@@ -35,7 +35,23 @@ dashmap = { workspace = true }
 serde_json = { workspace = true }
 serde = { workspace = true }
 sha2 = { workspace = true }
-tokio = { version = "1.42", features = ["sync", "rt"] }
+tokio = { version = "1.42", features = ["sync", "rt", "rt-multi-thread", "macros", "signal", "parking_lot", "net"] }
+
+arrow-array = "56.2.0"
+arrow-buffer = "56.2.0"
+arrow-flight = { version = "56.2.0", default-features = false }
+arrow-ipc = "56.2.0"
+arrow-schema = "56.2.0"
+arrow-data = "56.2.0"
+async-stream = "0.3"
+bytecheck = "0.6"
+bytes = "1.6"
+futures = "0.3"
+opentelemetry = { version = "0.23", features = ["metrics"] }
+rkyv = { version = "0.7", features = ["validation", "bytecheck", "std", "alloc"] }
+thiserror = "1.0"
+tokio-stream = "0.1"
+tonic = { version = "0.13", features = ["transport"] }
 
 [dev-dependencies]
 criterion = { version = "0.7", features = ["html_reports"] }
@@ -43,6 +59,10 @@ criterion = { version = "0.7", features = ["html_reports"] }
 [[bench]]
 name = "benches"
 path = "benches/mod.rs"
+harness = false
+
+[[bench]]
+name = "zerocopy_bench"
 harness = false
 
 [[test]]

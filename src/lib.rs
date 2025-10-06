@@ -155,6 +155,7 @@ pub mod orderbook;
 
 pub mod prelude;
 mod utils;
+pub mod zerocopy;
 
 pub use orderbook::manager::{BookManager, BookManagerStd, BookManagerTokio};
 pub use orderbook::trade::{TradeListener, TradeResult};
